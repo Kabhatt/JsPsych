@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My experiment</title>
+  <script src="jspsych/dist/jspsych.js"></script>
+  <script src="jspsych/dist/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="jspsych/dist/plugins/jspsych-image-keyboard-response.js"></script>
+  <script src="jspsych/dist/plugins/jspsych-preload.js"></script>
+  <link href="jspsych/dist/css/jspsych.css" rel="stylesheet" type="text/css" />
+</head>
+<body></body>
+<script>
+  var timeline = [];
+  var welcome = {
+    type: 'html-keyboard-response',
+    stimulus: "Welcome to the experiment. Press any key to begin."
+  };
+  timeline.push(welcome);
+
+  var stimuli = [
+    { stimulus: 'img/small_circle.jpg' },
+    { stimulus: 'img/large_circle.jpg' },
+    { stimulus: 'img/small_circle.jpg' },
+    { stimulus: 'img/large_circle.jpg' }
+  ];
+
+  for (var i = 0; i < stimuli.length; i++) {
+    var trial = {
+      type: 'image-keyboard-response',
+      stimulus: stimuli[i].stimulus,
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+      post_trial_gap: 0,
+      on_start: function(trial) {
+        jsPsych.pluginAPI.setTimeout(function() {
+          trial.choices = ['y', 'n'];
+          trial.prompt = '<p>Do you expect a noise due to this stimulus?</p><p>(Press Y for Yes, N for No)</p>';
+        }, 2000);
+      }
+    };
+    timeline.push(trial);
+  }
+  var debrief_block = {
+    type: "html-keyboard-response",
+    stimulus: "Thank you for participating in the experiment!",
+    choices: jsPsych.NO_KEYS,
+    trial_duration: 3000
+  };
+  timeline.push(debrief_block);
+
+  /* initialize jsPsych */
+  jsPsych.init({
+    timeline: timeline,
+    preload: [
+      {src: 'img/small_circle.jpg'},
+      {src: 'img/large_circle.jpg'}
+    ],
+    on_finish: function() {
+      jsPsych.data.displayData();
+    }
+  });
+</script>
+</html>
+
